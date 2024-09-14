@@ -59,7 +59,7 @@
                     .then((res) => {
                         if (res.data.success) {
                             this.products = res.data.products;
-                            this.pagination = res.pagination;
+                            this.pagination = res.data.pagination;
                         }
                     });
             }
