@@ -1,6 +1,6 @@
 <template>
     <div class="text-end">
-        <button class="btn btn-primary" type="button" @click="$refs.productModal.showModal()">增加一個產品</button>
+        <button class="btn btn-primary" type="button" @click="openModal(true)">增加一個產品</button>
     </div>
     <table class="table mt-4">
         <thead>
@@ -29,14 +29,14 @@
                 </td>
                 <td>
                     <div class="btn-group">
-                        <button class="btn btn-outline-primary btn-sm">編輯</button>
+                        <button class="btn btn-outline-primary btn-sm" @click="openModal(false, item)">編輯</button>
                         <button class="btn btn-outline-danger btn-sm">刪除</button>
                     </div>
                 </td>
             </tr>
         </tbody>
     </table>
-    <ProductModal ref="productModal"></ProductModal>
+    <ProductModal :product="tempProduct" @update-product="updateProduct" ref="productModal"></ProductModal>
 </template>
 
 <script>
@@ -50,9 +50,23 @@
             return {
                 products: [],
                 pagination: {},
+                tempProduct: {},
+                isNew: false,
             };
         },
         methods: {
+            openModal(isNew, item) {
+                if (isNew) {
+                    this.tempProduct = {};
+                } else {
+                    this.tempProduct = { ...item };
+                }
+                this.isNew = isNew;
+                this.$refs.productModal.showModal();
+            },
+            closeModal() {
+                this.$refs.productModal.hideModal();
+            },
             getProducts() {
                 const api = `${import.meta.env.VITE_API}api/${import.meta.env.VITE_PATH}/admin/products`;
                 this.$http.get(api)
@@ -61,6 +75,28 @@
                             this.products = res.data.products;
                             this.pagination = res.data.pagination;
                         }
+                    });
+            },
+            updateProduct(item) {
+                this.tempProduct = item;
+
+                // 新增
+                let api = `${import.meta.env.VITE_API}api/${import.meta.env.VITE_PATH}/admin/product`;
+                let httpMethod = 'post';
+                // 編輯
+                if (!this.isNew) {
+                    api = `${import.meta.env.VITE_API}api/${import.meta.env.VITE_PATH}/admin/product/${item.id}`;
+                    httpMethod = 'put';
+                }
+                
+                this.$http[httpMethod](api, { data: this.tempProduct })
+                    .then((res) => {
+                        if (res.data.success) {
+                            console.log('success');
+                        }
+                        console.log(res);
+                        this.closeModal();
+                        this.getProducts();
                     });
             }
         },
