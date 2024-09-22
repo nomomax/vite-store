@@ -30,21 +30,24 @@
                 <td>
                     <div class="btn-group">
                         <button class="btn btn-outline-primary btn-sm" @click="openModal(false, item)">編輯</button>
-                        <button class="btn btn-outline-danger btn-sm">刪除</button>
+                        <button class="btn btn-outline-danger btn-sm" @click="delModal(item)">刪除</button>
                     </div>
                 </td>
             </tr>
         </tbody>
     </table>
     <ProductModal :product="tempProduct" @update-product="updateProduct" ref="productModal"></ProductModal>
+    <DelModal :item="tempProduct" ref="deleteModal"></DelModal>
 </template>
 
 <script>
     import ProductModal from '@/components/ProductModal.vue';
+    import DelModal from '@/components/DelModal.vue';
 
     export default {
         components: {
             ProductModal,
+            DelModal
         },
         data() {
             return {
@@ -67,6 +70,10 @@
             closeModal() {
                 this.$refs.productModal.hideModal();
             },
+            delModal(item) {
+                this.tempProduct = { ...item };
+                this.$refs.deleteModal.showModal();
+            },
             getProducts() {
                 const api = `${import.meta.env.VITE_API}api/${import.meta.env.VITE_PATH}/admin/products`;
                 this.$http.get(api)
@@ -88,7 +95,7 @@
                     api = `${import.meta.env.VITE_API}api/${import.meta.env.VITE_PATH}/admin/product/${item.id}`;
                     httpMethod = 'put';
                 }
-                
+
                 this.$http[httpMethod](api, { data: this.tempProduct })
                     .then((res) => {
                         if (res.data.success) {
@@ -98,6 +105,10 @@
                         this.closeModal();
                         this.getProducts();
                     });
+            },
+            deleteProduct(item) {
+                console.log(item);
+
             }
         },
         created() {
