@@ -30,14 +30,14 @@
                 <td>
                     <div class="btn-group">
                         <button class="btn btn-outline-primary btn-sm" @click="openModal(false, item)">編輯</button>
-                        <button class="btn btn-outline-danger btn-sm" @click="delModal(item)">刪除</button>
+                        <button class="btn btn-outline-danger btn-sm" @click="openDelModal(item)">刪除</button>
                     </div>
                 </td>
             </tr>
         </tbody>
     </table>
     <ProductModal :product="tempProduct" @update-product="updateProduct" ref="productModal"></ProductModal>
-    <DelModal :item="tempProduct" ref="deleteModal"></DelModal>
+    <DelModal :item="tempProduct" @del-item="deleteProduct" ref="deleteModal"></DelModal>
 </template>
 
 <script>
@@ -70,9 +70,12 @@
             closeModal() {
                 this.$refs.productModal.hideModal();
             },
-            delModal(item) {
+            openDelModal(item) {
                 this.tempProduct = { ...item };
                 this.$refs.deleteModal.showModal();
+            },
+            closeDelModal() {
+                this.$refs.deleteModal.hideModal();
             },
             getProducts() {
                 const api = `${import.meta.env.VITE_API}api/${import.meta.env.VITE_PATH}/admin/products`;
@@ -106,9 +109,14 @@
                         this.getProducts();
                     });
             },
-            deleteProduct(item) {
-                console.log(item);
-
+            deleteProduct() {
+                const api = `${import.meta.env.VITE_API}api/${import.meta.env.VITE_PATH}/admin/product/${this.tempProduct.id}`;
+                this.$http.delete(api)
+                    .then((res) => {
+                        console.log(res);
+                        this.closeDelModal();
+                        this.getProducts();
+                    });
             }
         },
         created() {
