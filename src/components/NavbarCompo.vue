@@ -1,4 +1,5 @@
 <template>
+    <Loading :active="isLoading"></Loading>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container-fluid">
             <a class="navbar-brand" href="#">Navbar</a>
@@ -28,11 +29,18 @@
 
 <script>
 export default {
+    data() {
+        return {
+            isLoading: false,
+        }
+    },
     methods: {
         logout() {
+            this.isLoading = true;
             const api = `${import.meta.env.VITE_API}logout`
             this.$http.post(api, this.user)
                 .then((res) => {
+                    this.isLoading = false;
                     if (res.data.success) {
                         this.$router.push('/login');
                     }

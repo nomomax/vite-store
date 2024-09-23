@@ -1,4 +1,5 @@
 <template>
+    <Loading :active="isLoading"></Loading>
     <div class="container mt-5">
         <form class="row justify-content-center" @submit.prevent="signIn">
             <div class="col-md-6">
@@ -29,14 +30,17 @@ export default {
             user: {
                 username: '',
                 password: '',
-            }
+            },
+            isLoading: false,
         }
     },
     methods: {
         signIn() {
+            this.isLoading = true;
             const api = `${import.meta.env.VITE_API}admin/signin`
             this.$http.post(api, this.user)
                 .then((res) => {
+                    this.isLoading = false;
                     if (res.data.success) {
                         const { token, expired } = res.data;
                         document.cookie = `hexToken=${token}; expires=${new Date(expired)}`

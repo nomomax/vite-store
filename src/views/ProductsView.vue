@@ -1,4 +1,5 @@
 <template>
+    <Loading :active="isLoading"></Loading>
     <div class="text-end">
         <button class="btn btn-primary" type="button" @click="openModal(true)">增加一個產品</button>
     </div>
@@ -55,8 +56,10 @@
                 pagination: {},
                 tempProduct: {},
                 isNew: false,
+                isLoading: false,
             };
         },
+        inject: ['emitter'],
         methods: {
             openModal(isNew, item) {
                 if (isNew) {
@@ -78,9 +81,11 @@
                 this.$refs.deleteModal.hideModal();
             },
             getProducts() {
+                this.isLoading = true;
                 const api = `${import.meta.env.VITE_API}api/${import.meta.env.VITE_PATH}/admin/products`;
                 this.$http.get(api)
                     .then((res) => {
+                        this.isLoading = false;
                         if (res.data.success) {
                             this.products = res.data.products;
                             this.pagination = res.data.pagination;
@@ -89,6 +94,7 @@
             },
             updateProduct(item) {
                 this.tempProduct = item;
+                this.isLoading = true;
 
                 // 新增
                 let api = `${import.meta.env.VITE_API}api/${import.meta.env.VITE_PATH}/admin/product`;
@@ -101,19 +107,30 @@
 
                 this.$http[httpMethod](api, { data: this.tempProduct })
                     .then((res) => {
-                        if (res.data.success) {
-                            console.log('success');
-                        }
-                        console.log(res);
+                        this.isLoading = false;
                         this.closeModal();
-                        this.getProducts();
+                        if (res.data.success) {
+                            this.getProducts();
+                            this.emitter.emit('push-message', {
+                                style: 'success',
+                                title: '更新成功',
+                            });
+                        } else {
+                            this.emitter.emit('push-message', {
+                                style: 'danger',
+                                title: '更新失敗',
+                                content: res.data.message.join('、'),
+                            });
+                        }
                     });
             },
             deleteProduct() {
+                this.isLoading = true;
                 const api = `${import.meta.env.VITE_API}api/${import.meta.env.VITE_PATH}/admin/product/${this.tempProduct.id}`;
                 this.$http.delete(api)
                     .then((res) => {
                         console.log(res);
+                        this.isLoading = false;
                         this.closeDelModal();
                         this.getProducts();
                     });

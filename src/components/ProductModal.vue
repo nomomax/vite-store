@@ -1,4 +1,5 @@
 <template>
+    <Loading :active="isLoading"></Loading>
     <!-- Modal -->
     <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true"
         ref="modal">
@@ -126,6 +127,7 @@
             return {
                 modal: {},
                 tempProduct: {},
+                isLoading: false,
             }
         },
         watch: {
@@ -139,9 +141,11 @@
                 const uploadedFile = this.$refs.fileInput.files[0];
                 const formData = new FormData();
                 formData.append('file-to-upload', uploadedFile);
+                this.isLoading = true;
                 const api = `${import.meta.env.VITE_API}api/${import.meta.env.VITE_PATH}/admin/upload`;
                 this.$http.post(api, formData)
                     .then((res) => {
+                        this.isLoading = false;
                         if (res.data.success) {
                             this.tempProduct.imageUrl = res.data.imageUrl;
                         }
