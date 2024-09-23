@@ -37,6 +37,7 @@
             </tr>
         </tbody>
     </table>
+    <Pagination :pages="pagination" @emit-pages="getProducts"></Pagination>
     <ProductModal :product="tempProduct" @update-product="updateProduct" ref="productModal"></ProductModal>
     <DelModal :item="tempProduct" @del-item="deleteProduct" ref="deleteModal"></DelModal>
 </template>
@@ -44,11 +45,13 @@
 <script>
     import ProductModal from '@/components/ProductModal.vue';
     import DelModal from '@/components/DelModal.vue';
+    import Pagination from '@/components/Pagination.vue';
 
     export default {
         components: {
             ProductModal,
-            DelModal
+            DelModal,
+            Pagination,
         },
         data() {
             return {
@@ -80,9 +83,9 @@
             closeDelModal() {
                 this.$refs.deleteModal.hideModal();
             },
-            getProducts() {
+            getProducts(page = 1) {
                 this.isLoading = true;
-                const api = `${import.meta.env.VITE_API}api/${import.meta.env.VITE_PATH}/admin/products`;
+                const api = `${import.meta.env.VITE_API}api/${import.meta.env.VITE_PATH}/admin/products?page=${page}`;
                 this.$http.get(api)
                     .then((res) => {
                         this.isLoading = false;
