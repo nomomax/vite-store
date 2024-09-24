@@ -38,7 +38,7 @@
         </tr>
         </tbody>
       </table>
-      <couponModal :coupon="tempCoupon" ref="couponModal"
+      <CouponModal :coupon="tempCoupon" ref="couponModal"
         @update-coupon="updateCoupon"/>
       <DelModal :item="tempCoupon" ref="delModal" @del-item="delCoupon"/>
     </div>
