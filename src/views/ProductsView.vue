@@ -38,7 +38,7 @@
         </tbody>
     </table>
     <Pagination :pages="pagination" @emit-pages="getProducts"></Pagination>
-    <ProductModal :product="tempProduct" @update-product="updateProduct" ref="productModal"></ProductModal>
+    <ProductModal :product="tempProduct" @update-item="updateProduct" ref="productModal"></ProductModal>
     <DelModal :item="tempProduct" @del-item="deleteProduct" ref="deleteModal"></DelModal>
 </template>
 
