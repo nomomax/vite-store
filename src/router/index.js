@@ -38,7 +38,21 @@ const router = createRouter({
           component: () => import('../views/CouponsView.vue')
         },
       ]
-    }
+    },
+    {
+      path: '/user',
+      component: () => import('../views/UserboardView.vue'),
+      children: [
+        {
+          path: 'cart',
+          component: () => import('../views/UserCart.vue')
+        },
+        {
+          path: 'product/:productId',
+          component: () => import('../views/UserProduct.vue')
+        },
+      ]
+    },
   ]
 })
 
