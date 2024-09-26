@@ -61,7 +61,14 @@
     data() {
       return {
         id: '',
-        order: {},
+        order: {
+          user: {
+            email: '',
+            name: '',
+            tel: '',
+            address: '',
+          }
+        },
       }
     },
     methods: {
