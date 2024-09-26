@@ -103,8 +103,7 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">取消
                     </button>
-                    <button type="button" class="btn btn-primary"
-                        @click="$emit('update-item', tempProduct)">確認</button>
+                    <button type="button" class="btn btn-primary" @click="$emit('update-item', tempProduct)">確認</button>
                 </div>
             </div>
         </div>
@@ -130,6 +129,7 @@
                 isLoading: false,
             }
         },
+        emits: ['update-item'],
         watch: {
             product() {
                 this.tempProduct = this.product;
